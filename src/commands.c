@@ -31,7 +31,7 @@ void command_3d2(void) {
     // Poprawiony draw_string (wymaga x, y, tekstu oraz koloru)
     draw_string(10, 10, "Uruchamianie animacji 3D...", 0x00FFFFFF);
     
-    run_3d_demo2(100, 100);
+    run_3d_demo2(0, 0);
 }
 
 static Command commands[] =
