@@ -1438,9 +1438,10 @@ void run_3d_demo(int32_t pos_x, int32_t pos_y) {
          { -40, 0, -40 },//4
          { -40, 0, 40 },//5
          { 40, 0, 40 },//6
-         { 40, 0, -40 }//7
+         { 40, 0, -40 },//7
+         { 0, 100, 0 }//8
         },
-        .vertex_count = 8,
+        .vertex_count = 9,
 
         .triangles = {
             { 0, 1, 2, 0x00FF0000 },
@@ -1456,10 +1457,14 @@ void run_3d_demo(int32_t pos_x, int32_t pos_y) {
             { 0, 7, 4, 0x00FF8800 },
             { 0, 7, 3, 0x00FF8800 },
             { 1, 6, 5, 0x000000FF },
-            { 1, 6, 2, 0x000000FF }
+            { 1, 6, 2, 0x000000FF },
 
+            { 8, 0, 1, 0x00888800 },
+            { 8, 1, 2, 0x000000FF },
+            { 8, 2, 3, 0x00888800 },
+            { 8, 3, 0, 0x000000FF }
         },
-        .triangle_count = 12,
+        .triangle_count = 16,
 
         .lines = {
         { 0, 6, 0x00000000 }
@@ -1471,7 +1476,7 @@ void run_3d_demo(int32_t pos_x, int32_t pos_y) {
         .rot_z = 0,
         .pos_x = pos_x,
         .pos_y = pos_y,
-        .pos_z = 300
+        .pos_z = 600
     };
 
     while (1) {
@@ -1485,11 +1490,80 @@ void run_3d_demo(int32_t pos_x, int32_t pos_y) {
         for (volatile int i = 0; i < 1000000; i++);
     }
 }
+void run_3d_demo2(int32_t pos_x, int32_t pos_y) {
+    Mesh3D p2 = {
+        .local_vertices = {
+        { 0, 0, 0 }
+        },
+        .vertex_count = 14,
+
+        .triangles = {
+            { 0, 1, 2, 0x00FF0000 },
+            { 0, 3, 2, 0x00FF0000 },
+            { 4, 5, 6, 0x00FFFF00 },
+            { 4, 7, 6, 0x00FFFF00 },
+
+            { 0, 4, 1, 0x0000FF00 },
+            { 5, 4, 1, 0x0000FF00 },
+            { 2, 7, 3, 0x00FF00FF },
+            { 2, 7, 6, 0x00FF00FF },
+
+            { 0, 7, 4, 0x00FF8800 },
+            { 0, 7, 3, 0x00FF8800 },
+            { 1, 6, 5, 0x000000FF },
+            { 1, 6, 2, 0x000000FF },
+
+            { 8, 0, 1, 0x00888800 },
+            { 8, 1, 2, 0x000000FF },
+            { 8, 2, 3, 0x00888800 },
+            { 8, 3, 0, 0x000000FF }
+        },
+        .triangle_count = 22 ,
+
+        .lines = {
+        { 0, 6, 0x00000000 }
+        },
+        .line_count = 1,
+
+        .rot_x = 0,
+        .rot_y = 0,
+        .rot_z = 0,
+        .pos_x = pos_x,
+        .pos_y = pos_y,
+        .pos_z = 600
+    };
+
+    while (1) {
+        if (inb(0x60) == 0x01) {
+            clear_rect(prev_box.min_x, prev_box.min_y, prev_box.max_x, prev_box.max_y, 0x00000000);
+            break;
+        }
+
+        draw_3d_frame(&p2);
+
+        for (volatile int i = 0; i < 1000000; i++);
+    }
 
 
+}
+/* Pomocnicza funkcja do zapisu słowa (16-bit) do portu I/O */
+static inline void outw(unsigned short port, unsigned short val) {
+    __asm__ __volatile__ ("outw %0, %1" : : "a"(val), "Nd"(port));
+}
 
+/* Funkcja wyłączająca system w QEMU */
+void shutdown(void) {
+    // Wysyła sygnał ACPI Shutdown do domyślnego portu QEMU
+    outw(0x604, 0x2000);
 
+    // Zapasowe wyłączenie dla starszych wersji QEMU / Bochs
+    outw(0xB004, 0x2000);
 
+    // Jeśli wyłączenie z jakiegoś powodu się nie powiedzie, zatrzymaj CPU
+    while (1) {
+        __asm__ __volatile__ ("cli; hlt");
+    }
+}
 
 void kernel_main(unsigned int magic, void* mbi)
 

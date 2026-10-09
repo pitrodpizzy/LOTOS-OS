@@ -27,7 +27,12 @@ void command_3d(void) {
     
     run_3d_demo(160, 100);
 }
-
+void command_3d2(void) {
+    // Poprawiony draw_string (wymaga x, y, tekstu oraz koloru)
+    draw_string(10, 10, "Uruchamianie animacji 3D...", 0x00FFFFFF);
+    
+    run_3d_demo2(100, 100);
+}
 
 static Command commands[] =
 {
@@ -53,7 +58,7 @@ static Command commands[] =
 {"notepad",  "LOTOS Notepad", command_notepad},
 {"mario", "Gra Mario", command_mario},
 {"3d", "3D", command_3d},
-
+{"3d2", "23d", command_3d2},
 };
 #define COMMAND_COUNT (sizeof(commands) / sizeof(commands[0]))
 
@@ -98,7 +103,7 @@ static void command_help(void)
     //draw_string(10, y, "color      - zmiana koloru konsoli", 0x00FFFFFF); y += 16;
 draw_string(10, y, "games      - LOTOS Game Center", 0x00FFFFFF); y += 16;
 draw_string(10, y, "3d         - animacja 3D", 0x10FFFDFF); y += 16;
-
+draw_string(10, y, "3d2        - 2 animacja 3D", 0x10FFFDFF); y += 16;
     console_x = 10;
     console_y = y;
 }
@@ -176,20 +181,9 @@ static void command_reboot(void)
         __asm__ volatile ("hlt");
     }
 }
-
-static void command_shutdown(void)
-{
-    draw_string(10, console_y + 16,
-        "Shutting down LOTOS...",
-        0x00FFFFFF);
-
-    console_y += 16;
-
-    while (1)
-    {
-        __asm__ volatile ("cli");
-        __asm__ volatile ("hlt");
-    }
+void command_shutdown(void) {
+    draw_string(10, 10, "Wylaczanie systemu...", 0x00FF0000);
+    shutdown();
 }
 
 static void command_logo(void)

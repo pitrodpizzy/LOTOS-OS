@@ -24,6 +24,6 @@ void beep(unsigned int frequency);
 extern int console_x;
 extern int console_y;
 void run_3d_demo(int32_t pos_x, int32_t pos_y);
-
-
+void shutdown(void);
+void run_3d_demo2(int32_t pos_x, int32_t pos_y);
 #endif
